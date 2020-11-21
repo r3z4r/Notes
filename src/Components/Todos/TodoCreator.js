@@ -8,12 +8,16 @@ const useStyles = makeStyles(theme => ({
 		padding: "8px 12px",
 		maxWidth: 550,
 		margin: "36px auto",
+		outline: "none",
 	},
 	gap: {
 		flexGrow: 1,
 	},
 	input: {
 		flexGrow: 1,
+	},
+	action: {
+		display: "flex",
 	},
 }));
 
@@ -23,7 +27,7 @@ const Todo = () => {
 	const [typing, setTyping] = useState(false);
 	const [title, setTitle] = useState("");
 	const [note, setNote] = useState("");
-	const {addTodo, startLoading} = useContext(globalContext);
+	const {addTodo, startLoading, setError} = useContext(globalContext);
 	useEffect(() => {
 		console.log("creator rendered");
 	});
@@ -31,23 +35,27 @@ const Todo = () => {
 		try {
 			setNote("");
 			setTitle("");
+			setTyping(false);
 			startLoading();
+			const todo = {
+				title: title,
+				note: note,
+				color: "default",
+				editedOn: new Date().toISOString(),
+			};
 			const res = await fetch("https://notes-94d5f.firebaseio.com/todos.json", {
 				method: "POST",
-				body: JSON.stringify({title: title, note: note}),
+				body: JSON.stringify(todo),
 			});
 			const response = await res.json();
 			if (res.ok) {
-				addTodo({
-					id: response.name,
-					title: title,
-					note: note,
-				});
+				addTodo({...todo, id: response.name});
 			} else {
 				alert(res.statusText);
 			}
 		} catch (err) {
 			console.error(err);
+			setError(err.message);
 		}
 	};
 
@@ -57,8 +65,27 @@ const Todo = () => {
 		setTyping(false);
 	};
 
+	const loseFocuse = ({relatedTarget, currentTarget}) => {
+		if (relatedTarget === null) {
+			cancelHandler();
+			return;
+		}
+		let node = relatedTarget;
+		while (node !== null) {
+			if (currentTarget === node) {
+				return;
+			}
+			node = node.parentNode;
+		}
+		cancelHandler();
+	};
+
 	return (
-		<Paper className={classes.root} elevation={6}>
+		<Paper
+			tabIndex="-1"
+			className={classes.root}
+			elevation={6}
+			onBlur={e => loseFocuse(e)}>
 			{typing
 				? <InputBase
 						fullWidth
@@ -81,13 +108,11 @@ const Todo = () => {
 				onClick={() => setTyping(true)}
 			/>
 			{typing &&
-				<div style={{display: "flex"}}>
+				<div className={classes.action}>
 					<div className={classes.gap} />
-					<Button color="primary.main" onClick={addTodoHandler}>
+					<Button onClick={cancelHandler}>cancel</Button>
+					<Button color="secondary" onClick={addTodoHandler}>
 						Add
-					</Button>
-					<Button color="secondary" onClick={cancelHandler}>
-						Close
 					</Button>
 				</div>}
 		</Paper>

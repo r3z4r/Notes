@@ -1,9 +1,9 @@
 import React, {useContext} from "react";
 import {globalContext} from "../../context/store";
-import Todo from "../../Components/Todo";
+import Todo from "./Todo";
 
 export default () => {
-	const {notes, deleteTodo, updateTodo, startLoading} = useContext(
+	const {notes, deleteTodo, updateTodo, startLoading,setError} = useContext(
 		globalContext
 	);
 	const onDelete = async (e, id) => {
@@ -25,12 +25,11 @@ export default () => {
 			}
 		} catch (err) {
 			console.error(err);
+			setError(err.message);
 		}
 	};
 	const onEdit = async (id,todo) => {
 		startLoading();
-		console.log(todo);
-		
 		try {
 			const res = await fetch(
 				`https://notes-94d5f.firebaseio.com/todos/${id}.json`,
@@ -39,8 +38,7 @@ export default () => {
 					body: JSON.stringify(todo),
 				}
 			);
-			const response = await res.json();
-			console.log(response);
+			await res.json();
 			if (res.ok) {
 				updateTodo(todo);
 			} else {
@@ -48,6 +46,7 @@ export default () => {
 			}
 		} catch (err) {
 			console.error(err);
+			setError(err.message);
 		}
 	};
 	return (
@@ -56,12 +55,10 @@ export default () => {
 				notes
 					.slice(0)
 					.reverse()
-					.map(({id, title, note}) =>
+					.map(todo =>
 						<Todo
-							key={id}
-							title={title}
-							note={note}
-							id={id}
+							key={todo.id}
+							todo={todo}
 							onDelete={onDelete}
 							onEditFinish={onEdit}
 							updateTodo={updateTodo}

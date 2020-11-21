@@ -6,14 +6,12 @@ export const globalContext = createContext({});
 export const ContextProvider = ({children, todos}) => {
 	const [state, dispatch] = useReducer(reducer, todos);
 	function addTodo(todo) {
-		console.log(todo); //debug
 		dispatch({type: "ADD", payload: todo});
 	}
 	function startLoading() {
 		dispatch({type: "START"});
 	}
 	function deleteTodo(id) {
-		console.log(id); //debug
 		dispatch({type: "DELETE", payload: id});
 	}
 	function updateTodo(todo) {
@@ -21,6 +19,9 @@ export const ContextProvider = ({children, todos}) => {
 	}
 	function setTheme() {
 		dispatch({type: "THEME"});
+	}
+	function setError(error) {
+		dispatch({type: "ERROR", payload: error});
 	}
 	useEffect(() => {
 		const getNotes = async () => {
@@ -31,17 +32,22 @@ export const ContextProvider = ({children, todos}) => {
 				);
 				const response = await res.json();
 				if (res.ok) {
-					const fetchedNotes = Object.keys(response).map(id => ({
-						id: id,
-						title: response[id].title,
-						note: response[id].note,
-					}));
+					const fetchedNotes = response
+						? Object.keys(response).map(id => ({
+								id: id,
+								title: response[id].title,
+								note: response[id].note,
+								color: response[id].color,
+								editedOn: response[id].editedOn,
+							}))
+						: [];
 					dispatch({type: "FETCH", payload: fetchedNotes});
 				} else {
 					alert(res.statusText);
 				}
 			} catch (error) {
 				console.error(error);
+				setError(error.message);
 			}
 		};
 		getNotes();
@@ -53,9 +59,11 @@ export const ContextProvider = ({children, todos}) => {
 				deleteTodo: deleteTodo,
 				updateTodo: updateTodo,
 				startLoading: startLoading,
+				setError: setError,
 				setTheme: setTheme,
 				notes: state.notes,
 				loading: state.loading,
+				error: state.error,
 				darkTheme: state.darkTheme,
 			}}>
 			{children}

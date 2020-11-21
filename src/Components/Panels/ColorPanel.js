@@ -1,49 +1,48 @@
 import React, {useState} from "react";
 
 import PaletteOutlinedIcon from "@material-ui/icons/PaletteOutlined";
-import {IconButton, Popover, makeStyles} from "@material-ui/core";
-import {orange, red, green} from "@material-ui/core/colors";
+import {IconButton, Popover, makeStyles, useTheme} from "@material-ui/core";
 
 import Color from "./Color";
 
 const useStyles = makeStyles(theme => ({
 	icon: {
 		padding: theme.spacing(1),
-		margin: theme.spacing(1, 0),
+		marginLeft: theme.spacing(1),
 	},
 	popover: {
 		pointerEvents: "none",
 	},
 	colors: {
-		margin: theme.spacing(0.6),
+		pointerEvents: "auto",
 		display: "flex",
 		flexWrap: "wrap",
-		maxWidth: 120,
+		maxWidth: theme.spacing(18),
 	},
 }));
 
-const colors = [orange, red, green];
-
-export default () => {
+export default ({color, setColor}) => {
 	const classes = useStyles();
+	const theme = useTheme();
 	const [anchorEl, setAnchorEl] = useState(null);
-
 	const handlePopoverOpen = e => {
 		setAnchorEl(e.currentTarget);
 	};
 	const handlePopoverClose = () => {
 		setAnchorEl(null);
 	};
+	const palette = Boolean(anchorEl);
 	const handleClick = e => {
 		e.stopPropagation();
+		palette ? handlePopoverClose() : handlePopoverOpen(e);
 	};
-	const palette = Boolean(anchorEl);
 	return (
 		<IconButton
+			edge="start"
 			aria-label="palette"
 			className={classes.icon}
 			onMouseEnter={handlePopoverOpen}
-			onBlur={handlePopoverClose}
+			onMouseLeave={handlePopoverClose}
 			onClick={handleClick}>
 			<PaletteOutlinedIcon style={{fontSize: 18}} />
 			<Popover
@@ -61,8 +60,16 @@ export default () => {
 				onClose={handlePopoverClose}
 				elevation={2}>
 				{
-					<div className={classes.colors}>
-						{colors.map(color => <Color color={color} />)}
+					<div className={classes.colors} onMouseLeave={handlePopoverClose}>
+						{Object.keys(theme.custom.palette.noteBackground).map(item =>
+							<Color
+								key={item}
+								color={item}
+								selectedColor={color}
+								checked={color === item}
+								setColor={setColor}
+							/>
+						)}
 					</div>
 				}
 			</Popover>

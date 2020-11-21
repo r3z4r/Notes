@@ -17,9 +17,9 @@ export default (state = {}, action = {}) => {
 				item => (item.id === data.id ? data : item)
 			);
 			return {...state, notes: modifiedNotes, loading: false};
+		case "ERROR":
+			return {...state, error: data, loading: false};
 		case "THEME":
-			console.log(state.darkTheme);
-
 			return {...state, darkTheme: !state.darkTheme};
 		default:
 			throw new Error("Action not defined");

@@ -1,5 +1,5 @@
 import React from "react";
-import Main from "./Containers/Main";
+import Main from "./Components/Main";
 import {ThemeProvider} from "@material-ui/core";
 import {light} from "./theme";
 import {ContextProvider} from "./context/store";

@@ -18,7 +18,7 @@ const lightTheme = createMuiTheme({
 			notesCheckbox: grey[700],
 			profilePopColor: "#FFF",
 			noteBackground: {
-				default: "#0000",
+				default: "#FFF",
 				red: "#F28B82",
 				orange: "#FBBC04",
 				yellow: "#FFF475",
@@ -56,7 +56,7 @@ const darkTheme = createMuiTheme({
 			notesCheckbox: "#5F6368",
 			profilePopColor: "#2D2E30",
 			noteBackground: {
-				default: "#0000",
+				default: "#000",
 				red: "#5C2B29",
 				orange: "#614A19",
 				yellow: "#635D18",
