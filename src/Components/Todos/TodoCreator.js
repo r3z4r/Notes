@@ -1,4 +1,4 @@
-import React, {useState, useRef, useContext, useEffect} from "react";
+import React, {useState, useContext, useEffect} from "react";
 
 import {InputBase, makeStyles, Paper, Button} from "@material-ui/core";
 import {globalContext} from "../../context/store";
@@ -22,7 +22,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Todo = () => {
-	const titleRef = useRef(null);
 	const classes = useStyles({});
 	const [typing, setTyping] = useState(false);
 	const [title, setTitle] = useState("");
@@ -32,6 +31,10 @@ const Todo = () => {
 		console.log("creator rendered");
 	});
 	const addTodoHandler = async () => {
+		if (note === "" && title === "") {
+			setTyping(false);
+			return;
+		}
 		try {
 			setNote("");
 			setTitle("");
@@ -51,7 +54,7 @@ const Todo = () => {
 			if (res.ok) {
 				addTodo({...todo, id: response.name});
 			} else {
-				alert(res.statusText);
+				setError(res.statusText);
 			}
 		} catch (err) {
 			console.error(err);
@@ -67,7 +70,7 @@ const Todo = () => {
 
 	const loseFocuse = ({relatedTarget, currentTarget}) => {
 		if (relatedTarget === null) {
-			cancelHandler();
+			addTodoHandler();
 			return;
 		}
 		let node = relatedTarget;
@@ -77,7 +80,7 @@ const Todo = () => {
 			}
 			node = node.parentNode;
 		}
-		cancelHandler();
+		addTodoHandler();
 	};
 
 	return (
@@ -90,7 +93,6 @@ const Todo = () => {
 				? <InputBase
 						fullWidth
 						placeholder="Title"
-						ref={titleRef}
 						value={title}
 						onChange={e => setTitle(e.target.value)}
 					/>
@@ -110,7 +112,7 @@ const Todo = () => {
 			{typing &&
 				<div className={classes.action}>
 					<div className={classes.gap} />
-					<Button onClick={cancelHandler}>cancel</Button>
+					<Button onClick={cancelHandler}>Cancel</Button>
 					<Button color="secondary" onClick={addTodoHandler}>
 						Add
 					</Button>

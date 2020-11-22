@@ -1,36 +1,37 @@
-import React, {useContext} from "react";
+import React, {useContext, useState} from "react";
 import {globalContext} from "../context/store";
 import Header from "../Components/Header";
-import {LinearProgress, Paper, Snackbar, IconButton} from "@material-ui/core";
-import ReplayIcon from "@material-ui/icons/Replay";
-import Alert from "@material-ui/lab/Alert";
+import {
+	LinearProgress as LoadingBar,
+	Paper,
+	makeStyles,
+} from "@material-ui/core";
+import SnackBar from "../Components/UI/SnackBar";
+import Sidebar from "../Components/Sidebar";
 
+const useStyle = makeStyles(theme => ({
+	loadingBar: {
+		position: "fixed",
+		top: 0,
+		width: "100%",
+		zIndex: theme.zIndex.drawer + 2,
+	},
+}));
 export default props => {
+	const classes = useStyle();
 	const {loading, error} = useContext(globalContext);
+	const [sidebarOpen, setSidebarOpen] = useState(false);
 	return (
-		<>
+		<div>
 			{loading &&
-				<LinearProgress
-					color="secondary"
-					style={{position: "fixed", top: 0, width: "100%"}}
-				/>}
-			{error &&
-				<Snackbar 
-					open={true}
-					anchorOrigin={{vertical: "bottom", horizontal: "left"}}>
-					<Alert severity="error" variant="filled" >
-						{error}
-						<IconButton style={{marginLeft: "20vw" , padding:0}} size='small' onClick={() => window.location.reload()}>
-							<ReplayIcon style={{marginLeft:"auto"}}/>
-						</IconButton>
-					</Alert>
-				</Snackbar>}
-			<Paper square style={{height: "100%"}}>
-				<Header />
-				<main>
+				<LoadingBar color="secondary" className={classes.loadingBar} />}
+			<Paper square style={{minHeight: "100vh"}}>
+				<SnackBar message={error} severity="error" open={error} />
+				<Header toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+				<Sidebar open={sidebarOpen}>
 					{props.children}
-				</main>
+				</Sidebar>
 			</Paper>
-		</>
+		</div>
 	);
 };

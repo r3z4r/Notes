@@ -11,6 +11,9 @@ export const ContextProvider = ({children, todos}) => {
 	function startLoading() {
 		dispatch({type: "START"});
 	}
+	function endLoading() {
+		dispatch({type: "END"});
+	}
 	function deleteTodo(id) {
 		dispatch({type: "DELETE", payload: id});
 	}
@@ -43,7 +46,7 @@ export const ContextProvider = ({children, todos}) => {
 						: [];
 					dispatch({type: "FETCH", payload: fetchedNotes});
 				} else {
-					alert(res.statusText);
+					setError(res.statusText);
 				}
 			} catch (error) {
 				console.error(error);
@@ -59,6 +62,7 @@ export const ContextProvider = ({children, todos}) => {
 				deleteTodo: deleteTodo,
 				updateTodo: updateTodo,
 				startLoading: startLoading,
+				endLoading: endLoading,
 				setError: setError,
 				setTheme: setTheme,
 				notes: state.notes,

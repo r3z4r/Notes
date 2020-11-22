@@ -12,11 +12,12 @@ const useStyles = makeStyles(theme => ({
 
 const Todos = () => {
 	const classes = useStyles();
+	const todoCreator = React.useMemo(() => <TodoCreator />, []);
 	return (
 		<div className={classes.root}>
-			<Grid container spacing={3}>
+			<Grid container spacing={1}>
 				<Grid item xs={12}>
-					<TodoCreator />
+					{todoCreator}
 				</Grid>
 				<TodosContainer />
 			</Grid>

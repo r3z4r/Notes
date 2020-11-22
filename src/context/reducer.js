@@ -3,6 +3,8 @@ export default (state = {}, action = {}) => {
 	switch (action.type) {
 		case "START":
 			return {...state, loading: true};
+		case "END":
+			return {...state, loading: false};
 		case "FETCH":
 			return {...state, notes: data, loading: false};
 		case "ADD":
@@ -16,7 +18,7 @@ export default (state = {}, action = {}) => {
 			const modifiedNotes = state.notes.map(
 				item => (item.id === data.id ? data : item)
 			);
-			return {...state, notes: modifiedNotes, loading: false};
+			return {...state, notes: modifiedNotes};
 		case "ERROR":
 			return {...state, error: data, loading: false};
 		case "THEME":

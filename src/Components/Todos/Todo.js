@@ -5,7 +5,7 @@ import {
 	Modal,
 	Grid,
 	InputBase,
-	Zoom,
+	Grow,
 	makeStyles,
 	Typography,
 	Fade,
@@ -16,7 +16,7 @@ import ActionBar from "./ActionBar";
 
 const useStyles = makeStyles(theme => ({
 	todo: {
-		padding: theme.spacing(1, 0),
+		padding: theme.spacing(1),
 		whiteSpace: "pre-line",
 		margin: theme.spacing(2, 1),
 		outline: "none",
@@ -49,113 +49,120 @@ export default ({todo, onDelete, onEditFinish, updateTodo}) => {
 
 	const [isEditMode, setEditMode] = useState(false);
 	const [isHovered, setHovered] = useState(false);
+	const [changed,setChanged] = useState(false)
 
 	const handleOpenModal = () => {
 		setEditMode(true);
 	};
 	const handleCloseModal = () => {
 		setEditMode(false);
-		onEditFinish(id, {
-			title: title,
-			note: note,
-			color: color,
+		if(changed){
+			onEditFinish({...todo,
+				editedOn: new Date().toISOString(),
+			});
+		}
+	};
+
+	const handleColorUpdate = col => {
+		onEditFinish({
+			...todo,
+			color: col,
 			editedOn: new Date().toISOString(),
 		});
 	};
 
-	const handleColorUpdate = col => {
-		const editedOn = new Date().toISOString();
-		updateTodo({
-			id: id,
-			title: title,
-			note: note,
-			color: col,
-			editedOn: editedOn,
-		});
-		onEditFinish(id, {
-			title: title,
-			note: note,
-			color: col,
-			editedOn: editedOn,
-		});
-	};
+	const Note = (
+		<Paper
+			className={classes.todo}
+			variant="outlined"
+			onClick={handleOpenModal}
+			onMouseOver={() => setHovered(true)}
+			onMouseLeave={() => setHovered(false)}>
+			<Typography variant="h6">
+				{title}
+			</Typography>
+			<Typography variant="subtitle1">
+				{note}
+			</Typography>
+			<Fade in={isHovered}>
+				<div>
+					<ActionBar
+						id={id}
+						onDelete={onDelete}
+						color={color}
+						setColor={col => handleColorUpdate(col)}
+					/>
+				</div>
+			</Fade>
+		</Paper>
+	);
 
-	return isEditMode
-		? <>
-				<Grid item xs={12} sm={6} md={4} lg={3}>
-					<Skeleton height="100%" />
-				</Grid>
-				<Modal
-					className={classes.modal}
-					open={isEditMode}
-					onClose={handleCloseModal}>
-					<Zoom in={isEditMode}>
-						<Paper className={classes.todo}>
-							<InputBase
-								fullWidth
-								autoFocus
-								placeholder="Title"
-								value={title}
-								onChange={e =>
-									updateTodo({id: id, title: e.target.value, note: note})}
-							/>
-							<InputBase
-								fullWidth
-								placeholder="Take a note"
-								multiline
-								value={note}
-								onChange={e =>
-									updateTodo({id: id, title: title, note: e.target.value})}
-							/>
-							<br />
-							<Typography
-								variant="caption"
-								display="block"
-								align="right"
-								color="textSecondary"
-								style={{fontSize: 10, marginRight: 8}}>
-								{`Edited ${date}`}
-							</Typography>
-							<ActionBar
-								id={id}
-								onDelete={onDelete}
-								color={color}
-								setColor={col =>
+	return (
+		<>
+			<Modal
+				className={classes.modal}
+				open={isEditMode}
+				onClose={handleCloseModal}>
+				<Grow in={isEditMode}>
+					<Paper className={classes.todo}>
+						<InputBase
+							style={{fontSize:24}}
+							fullWidth
+							autoFocus
+							placeholder="Title"
+							value={title}
+							onChange={e =>
+								{
+									updateTodo({...todo, title: e.target.value});
+									setChanged(true)
+								}}
+						/>
+						<InputBase
+							style={{width:"95%"}}
+							placeholder="Take a note"
+							multiline
+							value={note}
+							onChange={e =>
+								{
+									updateTodo({...todo, note: e.target.value})
+									setChanged(true)
+								}}
+						/>
+						<br />
+						<br />
+						<Typography
+							variant="caption"
+							display="block"
+							align="right"
+							color="textSecondary"
+							style={{fontSize: 10, marginRight: 8}}>
+							{`Edited ${date}`}
+						</Typography>
+						<ActionBar
+							id={id}
+							onDelete={onDelete}
+							color={color}
+							setColor={col =>
+								{
 									updateTodo({
-										id: id,
-										title: title,
-										note: note,
+										...todo,
 										color: col,
-										editedOn: new Date().toISOString(),
-									})}
-							/>
-						</Paper>
-					</Zoom>
-				</Modal>
-			</>
-		: <Grid item xs={12} sm={6} md={4} lg={3}>
-				<Paper
-					className={classes.todo}
-					variant="outlined"
-					onClick={handleOpenModal}
-					onMouseOver={() => setHovered(true)}
-					onMouseLeave={() => setHovered(false)}>
-					<Typography variant="h6">
-						{title}
-					</Typography>
-					<Typography variant="subtitle1">
-						{note}
-					</Typography>
-					<Fade in={isHovered}>
-						<div>
-							<ActionBar
-								id={id}
-								onDelete={onDelete}
-								color={color}
-								setColor={col => handleColorUpdate(col)}
-							/>
-						</div>
-					</Fade>
-				</Paper>
-			</Grid>;
+									})
+									setChanged(true)
+								}}
+						/>
+					</Paper>
+				</Grow>
+			</Modal>
+			<Grid item xs={12} sm={6} md={4} lg={3} >
+				{isEditMode
+					? <Skeleton className={classes.todo} height="65%" style={{transform:"none"}}>
+							{Note}
+						</Skeleton>
+					: <Grow in={!isEditMode} style={{transformOrigin: "0 0 0"}}>
+							{Note}
+						</Grow>}
+			</Grid>
+		</>
+	);
 };

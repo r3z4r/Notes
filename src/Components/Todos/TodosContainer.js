@@ -3,7 +3,7 @@ import {globalContext} from "../../context/store";
 import Todo from "./Todo";
 
 export default () => {
-	const {notes, deleteTodo, updateTodo, startLoading,setError} = useContext(
+	const {notes, deleteTodo, updateTodo, startLoading,endLoading,setError} = useContext(
 		globalContext
 	);
 	const onDelete = async (e, id) => {
@@ -16,33 +16,38 @@ export default () => {
 					method: "DELETE",
 				}
 			);
-			const response = await res.json();
-			console.log(response);
 			if (res.ok) {
 				deleteTodo(id);
 			} else {
-				alert(res.statusText);
+				setError(res.statusText);
 			}
 		} catch (err) {
 			console.error(err);
 			setError(err.message);
 		}
 	};
-	const onEdit = async (id,todo) => {
+	const onEdit = async (todo) => {
+		const {id,title,note,color,editedOn} = todo
+		updateTodo(todo)
 		startLoading();
 		try {
 			const res = await fetch(
 				`https://notes-94d5f.firebaseio.com/todos/${id}.json`,
 				{
 					method: "PATCH",
-					body: JSON.stringify(todo),
+					body: JSON.stringify({
+						title: title,
+						note: note,
+						color: color,
+						editedOn: editedOn,
+					}),
 				}
 			);
 			await res.json();
 			if (res.ok) {
-				updateTodo(todo);
+				endLoading();
 			} else {
-				alert(res.statusText);
+				setError(res.statusText);
 			}
 		} catch (err) {
 			console.error(err);

@@ -40,6 +40,9 @@ const lightTheme = createMuiTheme({
 //dark theme
 const darkTheme = createMuiTheme({
 	palette: {
+		background: {
+			paper: "#303030",
+		},
 		type: "dark",
 		primary: {
 			main: "#202124",
@@ -56,7 +59,7 @@ const darkTheme = createMuiTheme({
 			notesCheckbox: "#5F6368",
 			profilePopColor: "#2D2E30",
 			noteBackground: {
-				default: "#000",
+				default: "#303030",
 				red: "#5C2B29",
 				orange: "#614A19",
 				yellow: "#635D18",
