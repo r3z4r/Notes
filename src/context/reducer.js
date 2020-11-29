@@ -23,6 +23,8 @@ export default (state = {}, action = {}) => {
 			return {...state, error: data, loading: false};
 		case "THEME":
 			return {...state, darkTheme: !state.darkTheme};
+		case "LISTVIEW":
+			return {...state, listview: !state.listview};
 		default:
 			throw new Error("Action not defined");
 	}

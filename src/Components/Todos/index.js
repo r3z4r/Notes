@@ -15,7 +15,7 @@ const Todos = () => {
 	const todoCreator = React.useMemo(() => <TodoCreator />, []);
 	return (
 		<div className={classes.root}>
-			<Grid container spacing={1}>
+			<Grid container spacing={2}>
 				<Grid item xs={12}>
 					{todoCreator}
 				</Grid>

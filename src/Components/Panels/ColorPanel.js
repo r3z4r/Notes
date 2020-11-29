@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
 	},
 }));
 
-export default ({color, setColor}) => {
+export default ({color, setColor, disablePortal}) => {
 	const classes = useStyles();
 	const theme = useTheme();
 	const [anchorEl, setAnchorEl] = useState(null);
@@ -46,6 +46,9 @@ export default ({color, setColor}) => {
 			onClick={handleClick}>
 			<PaletteOutlinedIcon style={{fontSize: 18}} />
 			<Popover
+				disablePortal={disablePortal}
+				disableAutoFocus
+				disableEnforceFocus
 				className={classes.popover}
 				open={palette}
 				anchorEl={anchorEl}

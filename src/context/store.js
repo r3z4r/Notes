@@ -26,6 +26,9 @@ export const ContextProvider = ({children, todos}) => {
 	function setError(error) {
 		dispatch({type: "ERROR", payload: error});
 	}
+	function setListview() {
+		dispatch({type: "LISTVIEW"});
+	}
 	useEffect(() => {
 		const getNotes = async () => {
 			try {
@@ -65,10 +68,12 @@ export const ContextProvider = ({children, todos}) => {
 				endLoading: endLoading,
 				setError: setError,
 				setTheme: setTheme,
+				setListview: setListview,
 				notes: state.notes,
 				loading: state.loading,
 				error: state.error,
 				darkTheme: state.darkTheme,
+				listview: state.listview,
 			}}>
 			{children}
 		</globalContext.Provider>

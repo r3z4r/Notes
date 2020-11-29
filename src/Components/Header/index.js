@@ -1,9 +1,20 @@
 import React, {useContext} from "react";
 
+import clsx from "clsx";
 import Logo from "../../Images/logo.svg";
-import {Typography, IconButton, makeStyles, AppBar} from "@material-ui/core";
+import {
+	Typography,
+	IconButton,
+	makeStyles,
+	AppBar,
+	useScrollTrigger,
+} from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
-import Brightness4Icon from "@material-ui/icons/Brightness4";
+import {
+	Brightness4 as Brightness4Icon,
+	ViewStream as ViewStreamIcon,
+	Apps as AppsIcon,
+} from "@material-ui/icons";
 import {globalContext} from "../../context/store";
 
 const useStyle = makeStyles(theme => ({
@@ -14,8 +25,10 @@ const useStyle = makeStyles(theme => ({
 		alignItems: "center",
 		height: theme.spacing(8),
 		backgroundColor: theme.palette.primary.main,
-		boxShadow: theme.shadows[1],
 		zIndex: theme.zIndex.drawer + 1,
+	},
+	headerScroll: {
+		borderBottom: `solid 1px ${theme.palette.divider}`,
 	},
 	logo: {
 		height: "60%",
@@ -25,18 +38,29 @@ const useStyle = makeStyles(theme => ({
 		flex: 1,
 	},
 }));
+
 export default ({toggleSidebar}) => {
-	const classes = useStyle({});
-	const {setTheme} = useContext(globalContext);
+	const trigger = useScrollTrigger({
+		disableHysteresis: true,
+		threshold: 0,
+	});
+	const classes = useStyle();
+	const {listview, setListview, setTheme} = useContext(globalContext);
 	return (
-		<AppBar position="sticky" className={classes.header}>
+		<AppBar
+			elevation={trigger ? 4 : 0}
+			position="sticky"
+			className={clsx(classes.header, {[classes.headerScroll]: !trigger})}>
 			<IconButton onClick={toggleSidebar} aria-label="menu">
 				<MenuIcon color="secondary" />
 			</IconButton>
 			<img className={classes.logo} src={Logo} alt="logo" />
-			<Typography variant="h5" color="secondary" className={classes.grow}>
+			<Typography variant="h6" color="secondary" className={classes.grow}>
 				Notes
 			</Typography>
+			<IconButton onClick={setListview}>
+				{listview ? <ViewStreamIcon /> : <AppsIcon />}
+			</IconButton>
 			<IconButton onClick={setTheme}>
 				<Brightness4Icon />
 			</IconButton>

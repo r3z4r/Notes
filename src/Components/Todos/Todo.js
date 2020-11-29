@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState ,useContext} from "react";
 
 import {
 	Paper,
@@ -13,14 +13,16 @@ import {
 } from "@material-ui/core";
 import Skeleton from "@material-ui/lab/Skeleton";
 import ActionBar from "./ActionBar";
+import {globalContext} from '../../context/store'
 
 const useStyles = makeStyles(theme => ({
 	todo: {
-		padding: theme.spacing(1),
+		padding: theme.spacing(1,1,0,1),
 		whiteSpace: "pre-line",
-		margin: theme.spacing(2, 1),
+		margin: "auto",
 		outline: "none",
 		backgroundColor: ({color}) => color,
+		maxWidth : theme.spacing(70),
 		"& p, h6, div": {
 			margin: theme.spacing(0, 2),
 		},
@@ -41,6 +43,7 @@ const useStyles = makeStyles(theme => ({
 
 export default ({todo, onDelete, onEditFinish, updateTodo}) => {
 	const {id, title, note, color, editedOn} = todo;
+	const {listview} = useContext(globalContext)
 	const date = new Date(editedOn).toDateString();
 	const theme = useTheme();
 	const classes = useStyles({
@@ -56,6 +59,7 @@ export default ({todo, onDelete, onEditFinish, updateTodo}) => {
 	};
 	const handleCloseModal = () => {
 		setEditMode(false);
+		setChanged(false);
 		if(changed){
 			onEditFinish({...todo,
 				editedOn: new Date().toISOString(),
@@ -154,12 +158,12 @@ export default ({todo, onDelete, onEditFinish, updateTodo}) => {
 					</Paper>
 				</Grow>
 			</Modal>
-			<Grid item xs={12} sm={6} md={4} lg={3} >
+			<Grid item xs={12} sm={listview?12:6} md={listview?12:4} lg={listview?12:3} >
 				{isEditMode
-					? <Skeleton className={classes.todo} height="65%" style={{transform:"none"}}>
+					? <Skeleton className={classes.todo} height="60%" style={{transform:"none"}}>
 							{Note}
 						</Skeleton>
-					: <Grow in={!isEditMode} style={{transformOrigin: "0 0 0"}}>
+					: <Grow in={!isEditMode} >
 							{Note}
 						</Grow>}
 			</Grid>

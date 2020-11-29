@@ -2,13 +2,15 @@ import React, {useState, useContext, useEffect} from "react";
 
 import {InputBase, makeStyles, Paper, Button} from "@material-ui/core";
 import {globalContext} from "../../context/store";
+import ColorPanel from "../Panels/ColorPanel";
 
 const useStyles = makeStyles(theme => ({
 	root: {
 		padding: "8px 12px",
-		maxWidth: 550,
+		maxWidth: theme.spacing(70),
 		margin: "36px auto",
 		outline: "none",
+		backgroundColor: ({col}) => theme.custom.palette.noteBackground[col],
 	},
 	gap: {
 		flexGrow: 1,
@@ -22,28 +24,29 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Todo = () => {
-	const classes = useStyles({});
 	const [typing, setTyping] = useState(false);
 	const [title, setTitle] = useState("");
 	const [note, setNote] = useState("");
+	const [color, setColor] = useState("default");
+	const classes = useStyles({col: color});
 	const {addTodo, startLoading, setError} = useContext(globalContext);
 	useEffect(() => {
 		console.log("creator rendered");
 	});
 	const addTodoHandler = async () => {
+		setColor("default");
+		setTyping(false);
 		if (note === "" && title === "") {
-			setTyping(false);
 			return;
 		}
 		try {
 			setNote("");
 			setTitle("");
-			setTyping(false);
 			startLoading();
 			const todo = {
 				title: title,
 				note: note,
-				color: "default",
+				color: color,
 				editedOn: new Date().toISOString(),
 			};
 			const res = await fetch("https://notes-94d5f.firebaseio.com/todos.json", {
@@ -65,6 +68,7 @@ const Todo = () => {
 	const cancelHandler = () => {
 		setNote("");
 		setTitle("");
+		setColor("default");
 		setTyping(false);
 	};
 
@@ -111,7 +115,13 @@ const Todo = () => {
 			/>
 			{typing &&
 				<div className={classes.action}>
-					<div className={classes.gap} />
+					<div className={classes.gap}>
+						<ColorPanel
+							color={color}
+							setColor={col => setColor(col)}
+							disablePortal
+						/>
+					</div>
 					<Button onClick={cancelHandler}>Cancel</Button>
 					<Button color="secondary" onClick={addTodoHandler}>
 						Add

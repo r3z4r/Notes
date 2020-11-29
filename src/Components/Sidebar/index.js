@@ -38,22 +38,26 @@ const useStyles = makeStyles(theme => ({
 			easing: theme.transitions.easing.sharp,
 			duration: theme.transitions.duration.leavingScreen,
 		}),
-		width: theme.spacing(7) + 1,
+		width: theme.spacing(7),
+		border: "none",
 		[theme.breakpoints.down("sm")]: {
 			backgroundColor: "#0000",
-			border: "none",
 		},
 	},
 	content: {
 		flexGrow: 1,
 		[theme.breakpoints.down("sm")]: {
-			marginLeft: theme.spacing(1.5),
+			marginLeft: theme.spacing(1.7),
 		},
+	},
+	menuItem: {
+		height: theme.spacing(7),
+		borderRadius: open => (open ? 0 : "50%"),
 	},
 }));
 
 export default ({open, children}) => {
-	const classes = useStyles();
+	const classes = useStyles(open);
 
 	return (
 		<div className={classes.root}>
@@ -70,19 +74,19 @@ export default ({open, children}) => {
 					}),
 				}}>
 				<List>
-					<ListItem button>
+					<ListItem selected={true} className={classes.menuItem} button>
 						<ListItemIcon>
 							<EmojiObjectsOutlinedIcon />
 						</ListItemIcon>
 						<ListItemText primary="Notes" />
 					</ListItem>
-					<ListItem button>
+					<ListItem selected={false} className={classes.menuItem} button>
 						<ListItemIcon>
 							<ArchiveOutlinedIcon />
 						</ListItemIcon>
 						<ListItemText primary="Archive" />
 					</ListItem>
-					<ListItem button>
+					<ListItem selected={false} className={classes.menuItem} button>
 						<ListItemIcon>
 							<DeleteOutlinedIcon />
 						</ListItemIcon>

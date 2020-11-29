@@ -6,7 +6,8 @@ import {ContextProvider} from "./context/store";
 
 function App() {
 	return (
-		<ContextProvider todos={{loading: false, darkTheme: false, notes: []}}>
+		<ContextProvider
+			todos={{loading: false, darkTheme: false, listview: false, notes: []}}>
 			<ThemeProvider theme={light}>
 				<Main />
 			</ThemeProvider>
