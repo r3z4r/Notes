@@ -27,7 +27,7 @@ export default () => {
 		}
 	};
 	const onEdit = async (todo) => {
-		const {id,title,note,color,editedOn} = todo
+		const {id,title,note,color,editedOn,isChecklist} = todo
 		updateTodo(todo)
 		startLoading();
 		try {
@@ -40,6 +40,7 @@ export default () => {
 						note: note,
 						color: color,
 						editedOn: editedOn,
+						isChecklist : isChecklist
 					}),
 				}
 			);

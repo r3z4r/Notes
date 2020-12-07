@@ -12,20 +12,18 @@ import {
 	useTheme,
 } from "@material-ui/core";
 import Skeleton from "@material-ui/lab/Skeleton";
-import ActionBar from "./ActionBar";
+import ActionBar from "./Actions/ActionBar";
 import {globalContext} from '../../context/store'
+import ChecklistView from "./CheckListView";
 
 const useStyles = makeStyles(theme => ({
 	todo: {
-		padding: theme.spacing(1,1,0,1),
+		padding: theme.spacing(1,1.5,0),
 		whiteSpace: "pre-line",
 		margin: "auto",
 		outline: "none",
 		backgroundColor: ({color}) => color,
 		maxWidth : theme.spacing(70),
-		"& p, h6, div": {
-			margin: theme.spacing(0, 2),
-		},
 		"&:hover": {
 			boxShadow: theme.shadows[3],
 		},
@@ -42,7 +40,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default ({todo, onDelete, onEditFinish, updateTodo}) => {
-	const {id, title, note, color, editedOn} = todo;
+	const {id, title, note, color, editedOn, isChecklist} = todo;
+	const [expandcompleted,setExpandCompleted]= useState(false)
 	const {listview} = useContext(globalContext)
 	const date = new Date(editedOn).toDateString();
 	const theme = useTheme();
@@ -75,6 +74,21 @@ export default ({todo, onDelete, onEditFinish, updateTodo}) => {
 		});
 	};
 
+	const handleToggleChecklist= ()=>{
+		let newNote;
+		if (isChecklist) {
+			newNote = note.map(item => item.text).join("\n");
+		} else {
+			newNote= note.split("\n").map(item => ({text: item, isCompleted: false}))
+		}
+		return({
+			...todo,
+			isChecklist: !isChecklist,
+			note: newNote,
+			editedOn: new Date().toISOString(),
+		});
+	}
+
 	const Note = (
 		<Paper
 			className={classes.todo}
@@ -85,9 +99,16 @@ export default ({todo, onDelete, onEditFinish, updateTodo}) => {
 			<Typography variant="h6">
 				{title}
 			</Typography>
-			<Typography variant="subtitle1">
-				{note}
-			</Typography>
+			{isChecklist?<ChecklistView 
+							expandcompleted={expandcompleted} 
+							setExpandCompleted={setExpandCompleted}  
+							notes={note}
+							setNote={(notes)=>
+								onEditFinish({...todo, note: notes})
+							}/>
+						:<Typography variant="subtitle1">
+							{note}
+						</Typography>}
 			<Fade in={isHovered}>
 				<div>
 					<ActionBar
@@ -95,6 +116,10 @@ export default ({todo, onDelete, onEditFinish, updateTodo}) => {
 						onDelete={onDelete}
 						color={color}
 						setColor={col => handleColorUpdate(col)}
+						isChecklist = {isChecklist}
+						toggleListMode = {()=>{
+							onEditFinish(handleToggleChecklist());
+						}}
 					/>
 				</div>
 			</Fade>
@@ -121,17 +146,26 @@ export default ({todo, onDelete, onEditFinish, updateTodo}) => {
 									setChanged(true)
 								}}
 						/>
-						<InputBase
-							style={{width:"95%"}}
-							placeholder="Take a note"
-							multiline
-							value={note}
-							onChange={e =>
-								{
-									updateTodo({...todo, note: e.target.value})
-									setChanged(true)
-								}}
-						/>
+						{isChecklist?<ChecklistView 
+										expandcompleted={expandcompleted} 
+										setExpandCompleted={setExpandCompleted} 
+										editMode notes={note} 
+										setNote={notes =>
+										{
+											updateTodo({...todo, note: notes})
+											setChanged(true)
+										}} />
+									:<InputBase
+										style={{width:"95%"}}
+										placeholder="Take a note"
+										multiline
+										value={note}
+										onChange={e =>
+											{
+												updateTodo({...todo, note: e.target.value})
+												setChanged(true)
+											}}
+									/>}
 						<br />
 						<br />
 						<Typography
@@ -154,11 +188,17 @@ export default ({todo, onDelete, onEditFinish, updateTodo}) => {
 									})
 									setChanged(true)
 								}}
+							isChecklist = {isChecklist}
+							toggleListMode = {() =>
+								{
+									updateTodo(handleToggleChecklist());
+									setChanged(true);
+								}}
 						/>
 					</Paper>
 				</Grow>
 			</Modal>
-			<Grid item xs={12} sm={listview?12:6} md={listview?12:4} lg={listview?12:3} >
+			<Grid item xs={12} sm={listview?12:6} md={listview?12:4} lg={listview?12:3} xl={listview?12:2} >
 				{isEditMode
 					? <Skeleton className={classes.todo} height="60%" style={{transform:"none"}}>
 							{Note}

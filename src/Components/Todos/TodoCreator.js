@@ -1,8 +1,10 @@
-import React, {useState, useContext, useEffect} from "react";
+import React, {useState, useContext} from "react";
 
 import {InputBase, makeStyles, Paper, Button} from "@material-ui/core";
 import {globalContext} from "../../context/store";
-import ColorPanel from "../Panels/ColorPanel";
+import ColorPanel from "./Actions/Panels/ColorPanel";
+import CheckBoxToggle from "./Actions/CheckBoxToggle";
+import CheckListView from "./CheckListView";
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -28,14 +30,16 @@ const Todo = () => {
 	const [title, setTitle] = useState("");
 	const [note, setNote] = useState("");
 	const [color, setColor] = useState("default");
+	const [isChecklist, setCheckbox] = useState(false);
+	const [expandcompleted, setExpandCompleted] = useState(true);
+
 	const classes = useStyles({col: color});
 	const {addTodo, startLoading, setError} = useContext(globalContext);
-	useEffect(() => {
-		console.log("creator rendered");
-	});
+
 	const addTodoHandler = async () => {
 		setColor("default");
 		setTyping(false);
+		setCheckbox(false);
 		if (note === "" && title === "") {
 			return;
 		}
@@ -47,6 +51,7 @@ const Todo = () => {
 				title: title,
 				note: note,
 				color: color,
+				isChecklist: isChecklist,
 				editedOn: new Date().toISOString(),
 			};
 			const res = await fetch("https://notes-94d5f.firebaseio.com/todos.json", {
@@ -70,6 +75,7 @@ const Todo = () => {
 		setTitle("");
 		setColor("default");
 		setTyping(false);
+		setCheckbox(false);
 	};
 
 	const loseFocuse = ({relatedTarget, currentTarget}) => {
@@ -87,6 +93,17 @@ const Todo = () => {
 		addTodoHandler();
 	};
 
+	const toggleListMode = () => {
+		if (isChecklist) {
+			setNote(perv => perv.map(item => item.text).join("\n"));
+		} else {
+			setNote(perv =>
+				perv.split("\n").map(item => ({text: item, isCompleted: false}))
+			);
+		}
+		setCheckbox(perv => !perv);
+	};
+
 	return (
 		<Paper
 			tabIndex="-1"
@@ -101,18 +118,26 @@ const Todo = () => {
 						onChange={e => setTitle(e.target.value)}
 					/>
 				: null}
-			<InputBase
-				autoFocus
-				placeholder="Take a note"
-				multiline
-				fullWidth
-				value={note}
-				onChange={e => {
-					setNote(e.target.value);
-					!typing && setTyping(true);
-				}}
-				onClick={() => setTyping(true)}
-			/>
+			{isChecklist
+				? <CheckListView
+						expandcompleted={expandcompleted}
+						setExpandCompleted={setExpandCompleted}
+						editMode
+						notes={note}
+						setNote={setNote}
+					/>
+				: <InputBase
+						autoFocus
+						placeholder="Take a note"
+						multiline
+						fullWidth
+						value={note}
+						onChange={e => {
+							setNote(e.target.value);
+							!typing && setTyping(true);
+						}}
+						onClick={() => setTyping(true)}
+					/>}
 			{typing &&
 				<div className={classes.action}>
 					<div className={classes.gap}>
@@ -120,6 +145,10 @@ const Todo = () => {
 							color={color}
 							setColor={col => setColor(col)}
 							disablePortal
+						/>
+						<CheckBoxToggle
+							isChecklist={isChecklist}
+							setCheckbox={toggleListMode}
 						/>
 					</div>
 					<Button onClick={cancelHandler}>Cancel</Button>

@@ -12,8 +12,8 @@ import {
 import MenuIcon from "@material-ui/icons/Menu";
 import {
 	Brightness4 as Brightness4Icon,
-	ViewStream as ViewStreamIcon,
-	Apps as AppsIcon,
+	ViewStream as ListViewIcon,
+	Apps as GridViewIcon,
 } from "@material-ui/icons";
 import {globalContext} from "../../context/store";
 
@@ -59,7 +59,7 @@ export default ({toggleSidebar}) => {
 				Notes
 			</Typography>
 			<IconButton onClick={setListview}>
-				{listview ? <ViewStreamIcon /> : <AppsIcon />}
+				{listview ? <GridViewIcon /> : <ListViewIcon />}
 			</IconButton>
 			<IconButton onClick={setTheme}>
 				<Brightness4Icon />

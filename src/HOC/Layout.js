@@ -27,7 +27,7 @@ export default props => {
 				<LoadingBar color="secondary" className={classes.loadingBar} />}
 			<Paper square style={{minHeight: "100vh"}}>
 				<SnackBar message={error} severity="error" open={error} />
-				<Header toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+				<Header toggleSidebar={() => setSidebarOpen(perv => !perv)} />
 				<Sidebar open={sidebarOpen}>
 					{props.children}
 				</Sidebar>

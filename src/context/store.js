@@ -45,6 +45,7 @@ export const ContextProvider = ({children, todos}) => {
 								note: response[id].note,
 								color: response[id].color,
 								editedOn: response[id].editedOn,
+								isChecklist: response[id].isChecklist,
 							}))
 						: [];
 					dispatch({type: "FETCH", payload: fetchedNotes});
