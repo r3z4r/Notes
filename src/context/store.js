@@ -33,9 +33,7 @@ export const ContextProvider = ({children, todos}) => {
 		const getNotes = async () => {
 			try {
 				startLoading();
-				const res = await fetch(
-					"https://notes-94d5f.firebaseio.com/todos.json"
-				);
+				const res = await fetch(`${process.env.REACT_APP_BASE_URL}/todos.json`);
 				const response = await res.json();
 				if (res.ok) {
 					const fetchedNotes = response
@@ -46,6 +44,7 @@ export const ContextProvider = ({children, todos}) => {
 								color: response[id].color,
 								editedOn: response[id].editedOn,
 								isChecklist: response[id].isChecklist,
+								labels: response[id].labels ? response[id].labels : [],
 							}))
 						: [];
 					dispatch({type: "FETCH", payload: fetchedNotes});
@@ -58,6 +57,35 @@ export const ContextProvider = ({children, todos}) => {
 			}
 		};
 		getNotes();
+	}, []);
+	useEffect(() => {
+		const getUserInfo = async () => {
+			try {
+				startLoading();
+				const res = await fetch(
+					`${process.env.REACT_APP_BASE_URL}/userInfo.json`
+				);
+				const response = await res.json();
+				if (res.ok) {
+					dispatch({
+						type: "USERINFO",
+						payload: response
+							? response
+							: {
+									darkTheme: false,
+									listview: false,
+									labels: [],
+								},
+					});
+				} else {
+					setError(res.statusText);
+				}
+			} catch (error) {
+				console.error(error);
+				setError(error.message);
+			}
+		};
+		getUserInfo();
 	}, []);
 	return (
 		<globalContext.Provider
@@ -73,8 +101,9 @@ export const ContextProvider = ({children, todos}) => {
 				notes: state.notes,
 				loading: state.loading,
 				error: state.error,
-				darkTheme: state.darkTheme,
-				listview: state.listview,
+				darkTheme: state.userInfo.darkTheme,
+				listview: state.userInfo.listview,
+				labels: state.userInfo.labels,
 			}}>
 			{children}
 		</globalContext.Provider>

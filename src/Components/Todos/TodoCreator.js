@@ -1,10 +1,20 @@
 import React, {useState, useContext} from "react";
 
-import {InputBase, makeStyles, Paper, Button} from "@material-ui/core";
+import {
+	InputBase,
+	makeStyles,
+	Paper,
+	Button,
+	IconButton,
+	Tooltip,
+} from "@material-ui/core";
 import {globalContext} from "../../context/store";
 import ColorPanel from "./Actions/Panels/ColorPanel";
 import CheckBoxToggle from "./Actions/CheckBoxToggle";
 import CheckListView from "./CheckListView";
+import CheckBoxOutlinedIcon from "@material-ui/icons/CheckBoxOutlined";
+import LabelPanel from "./Actions/Panels/LabelPanel";
+import LabelTags from "../Labels/LabelTags";
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -25,21 +35,23 @@ const useStyles = makeStyles(theme => ({
 	},
 }));
 
-const Todo = () => {
+export default () => {
 	const [typing, setTyping] = useState(false);
 	const [title, setTitle] = useState("");
 	const [note, setNote] = useState("");
 	const [color, setColor] = useState("default");
-	const [isChecklist, setCheckbox] = useState(false);
+	const [isChecklist, setChecklist] = useState(false);
 	const [expandcompleted, setExpandCompleted] = useState(true);
+	const [todoLabels, setTodoLabels] = useState([]);
 
 	const classes = useStyles({col: color});
-	const {addTodo, startLoading, setError} = useContext(globalContext);
+	const {labels, addTodo, startLoading, setError} = useContext(globalContext);
 
 	const addTodoHandler = async () => {
 		setColor("default");
 		setTyping(false);
-		setCheckbox(false);
+		setChecklist(false);
+		setTodoLabels([]);
 		if (note === "" && title === "") {
 			return;
 		}
@@ -52,9 +64,10 @@ const Todo = () => {
 				note: note,
 				color: color,
 				isChecklist: isChecklist,
+				labels: todoLabels,
 				editedOn: new Date().toISOString(),
 			};
-			const res = await fetch("https://notes-94d5f.firebaseio.com/todos.json", {
+			const res = await fetch(`${process.env.REACT_APP_BASE_URL}/todos.json`, {
 				method: "POST",
 				body: JSON.stringify(todo),
 			});
@@ -75,7 +88,7 @@ const Todo = () => {
 		setTitle("");
 		setColor("default");
 		setTyping(false);
-		setCheckbox(false);
+		setChecklist(false);
 	};
 
 	const loseFocuse = ({relatedTarget, currentTarget}) => {
@@ -101,7 +114,18 @@ const Todo = () => {
 				perv.split("\n").map(item => ({text: item, isCompleted: false}))
 			);
 		}
-		setCheckbox(perv => !perv);
+		setChecklist(perv => !perv);
+	};
+
+	const addRemoveLabels = label => {
+		const index = todoLabels.indexOf(label);
+		if (index === -1) {
+			setTodoLabels([...todoLabels, label]);
+		} else {
+			const newLabels = [...todoLabels];
+			newLabels.splice(index, 1);
+			setTodoLabels(newLabels);
+		}
 	};
 
 	return (
@@ -126,38 +150,61 @@ const Todo = () => {
 						notes={note}
 						setNote={setNote}
 					/>
-				: <InputBase
-						autoFocus
-						placeholder="Take a note"
-						multiline
-						fullWidth
-						value={note}
-						onChange={e => {
-							setNote(e.target.value);
-							!typing && setTyping(true);
-						}}
-						onClick={() => setTyping(true)}
-					/>}
+				: <div style={{display: "flex"}}>
+						<InputBase
+							style={{flexGrow: 1}}
+							autoFocus
+							placeholder="Take a note"
+							multiline
+							fullWidth
+							value={note}
+							onChange={e => {
+								setNote(e.target.value);
+								!typing && setTyping(true);
+							}}
+							onClick={() => setTyping(true)}
+						/>
+						{!typing &&
+							<Tooltip title="New list">
+								<IconButton
+									onClick={() => {
+										setTyping(true);
+										toggleListMode();
+									}}>
+									<CheckBoxOutlinedIcon />
+								</IconButton>
+							</Tooltip>}
+					</div>}
 			{typing &&
-				<div className={classes.action}>
-					<div className={classes.gap}>
-						<ColorPanel
-							color={color}
-							setColor={col => setColor(col)}
-							disablePortal
-						/>
-						<CheckBoxToggle
-							isChecklist={isChecklist}
-							setCheckbox={toggleListMode}
-						/>
+				<React.Fragment>
+					<LabelTags
+						labels={todoLabels}
+						onDelete={label => addRemoveLabels(label)}
+					/>
+					<div className={classes.action}>
+						<div className={classes.gap}>
+							<ColorPanel
+								color={color}
+								setColor={col => setColor(col)}
+								disablePortal
+							/>
+							<CheckBoxToggle
+								isChecklist={isChecklist}
+								setChecklist={toggleListMode}
+							/>
+							<LabelPanel
+								labels={labels}
+								selectedLabels={todoLabels}
+								disablePortal
+								setLabels={label => addRemoveLabels(label)}
+							/>
+						</div>
+						<Button onClick={cancelHandler}>Cancel</Button>
+						<Button color="secondary" onClick={addTodoHandler}>
+							Add
+						</Button>
 					</div>
-					<Button onClick={cancelHandler}>Cancel</Button>
-					<Button color="secondary" onClick={addTodoHandler}>
-						Add
-					</Button>
-				</div>}
+				</React.Fragment>}
 		</Paper>
 	);
 };
-
-export default Todo;

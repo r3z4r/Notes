@@ -7,7 +7,12 @@ import {ContextProvider} from "./context/store";
 function App() {
 	return (
 		<ContextProvider
-			todos={{loading: false, darkTheme: false, listview: false, notes: []}}>
+			todos={{
+				loading: false,
+				error: null,
+				notes: [],
+				userInfo: [],
+			}}>
 			<ThemeProvider theme={light}>
 				<Main />
 			</ThemeProvider>

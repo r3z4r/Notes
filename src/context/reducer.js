@@ -7,6 +7,8 @@ export default (state = {}, action = {}) => {
 			return {...state, loading: false};
 		case "FETCH":
 			return {...state, notes: data, loading: false};
+		case "USERINFO":
+			return {...state, userInfo: data, loading: false};
 		case "ADD":
 			const newNotes = [...state.notes];
 			newNotes.push(data);
@@ -22,9 +24,15 @@ export default (state = {}, action = {}) => {
 		case "ERROR":
 			return {...state, error: data, loading: false};
 		case "THEME":
-			return {...state, darkTheme: !state.darkTheme};
+			return {
+				...state,
+				userInfo: {...state.userInfo, darkTheme: !state.userInfo.darkTheme},
+			};
 		case "LISTVIEW":
-			return {...state, listview: !state.listview};
+			return {
+				...state,
+				userInfo: {...state.userInfo, listview: !state.userInfo.listview},
+			};
 		default:
 			throw new Error("Action not defined");
 	}

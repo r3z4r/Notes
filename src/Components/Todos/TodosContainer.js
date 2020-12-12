@@ -1,17 +1,24 @@
-import React, {useContext} from "react";
+import React, {Fragment, useContext} from "react";
 import {globalContext} from "../../context/store";
 import Todo from "./Todo";
 
 export default () => {
-	const {notes, deleteTodo, updateTodo, startLoading,endLoading,setError} = useContext(
-		globalContext
-	);
+	const {
+		notes,
+		deleteTodo,
+		updateTodo,
+		startLoading,
+		endLoading,
+		setError,
+		listview,
+		labels,
+	} = useContext(globalContext);
 	const onDelete = async (e, id) => {
 		e.stopPropagation();
 		startLoading();
 		try {
 			const res = await fetch(
-				`https://notes-94d5f.firebaseio.com/todos/${id}.json`,
+				`${process.env.REACT_APP_BASE_URL}/todos/${id}.json`,
 				{
 					method: "DELETE",
 				}
@@ -26,22 +33,18 @@ export default () => {
 			setError(err.message);
 		}
 	};
-	const onEdit = async (todo) => {
-		const {id,title,note,color,editedOn,isChecklist} = todo
-		updateTodo(todo)
+	const onEdit = async todo => {
+		updateTodo(todo);
+		const {id} = todo;
+		const request = {...todo};
+		delete request.id;
 		startLoading();
 		try {
 			const res = await fetch(
-				`https://notes-94d5f.firebaseio.com/todos/${id}.json`,
+				`${process.env.REACT_APP_BASE_URL}/todos/${id}.json`,
 				{
 					method: "PATCH",
-					body: JSON.stringify({
-						title: title,
-						note: note,
-						color: color,
-						editedOn: editedOn,
-						isChecklist : isChecklist
-					}),
+					body: JSON.stringify(request),
 				}
 			);
 			await res.json();
@@ -56,7 +59,7 @@ export default () => {
 		}
 	};
 	return (
-		<>
+		<Fragment>
 			{notes &&
 				notes
 					.slice(0)
@@ -68,8 +71,10 @@ export default () => {
 							onDelete={onDelete}
 							onEditFinish={onEdit}
 							updateTodo={updateTodo}
+							listview={listview}
+							labels={labels}
 						/>
 					)}
-		</>
+		</Fragment>
 	);
 };

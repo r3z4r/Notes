@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import clsx from "clsx";
 import {
 	Drawer,
@@ -13,7 +13,9 @@ import {
 	EmojiObjectsOutlined as EmojiObjectsOutlinedIcon,
 	ArchiveOutlined as ArchiveOutlinedIcon,
 	DeleteOutlined as DeleteOutlinedIcon,
+	EditOutlined as LabelEditIcon,
 } from "@material-ui/icons";
+import LabelEdit from "../Labels/LabelEdit";
 
 const drawerWidth = 200;
 const useStyles = makeStyles(theme => ({
@@ -58,6 +60,7 @@ const useStyles = makeStyles(theme => ({
 
 export default ({open, children}) => {
 	const classes = useStyles(open);
+	const [editLabels, setEditLabels] = useState(false);
 
 	return (
 		<div className={classes.root}>
@@ -80,6 +83,16 @@ export default ({open, children}) => {
 						</ListItemIcon>
 						<ListItemText primary="Notes" />
 					</ListItem>
+					<ListItem
+						onClick={() => setEditLabels(true)}
+						selected={false}
+						className={classes.menuItem}
+						button>
+						<ListItemIcon>
+							<LabelEditIcon />
+						</ListItemIcon>
+						<ListItemText primary="Edit labels" />
+					</ListItem>
 					<ListItem selected={false} className={classes.menuItem} button>
 						<ListItemIcon>
 							<ArchiveOutlinedIcon />
@@ -97,6 +110,7 @@ export default ({open, children}) => {
 			<main className={classes.content}>
 				{children}
 			</main>
+			<LabelEdit show={editLabels} close={() => setEditLabels(false)} />
 		</div>
 	);
 };

@@ -8,9 +8,6 @@ import {light, dark} from "../theme";
 export default () => {
 	const {darkTheme} = React.useContext(globalContext);
 
-	React.useEffect(() => {
-		console.log("main rendered");
-	});
 	return (
 		<ThemeProvider theme={darkTheme ? dark : light}>
 			<Layout>

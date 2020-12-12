@@ -1,15 +1,23 @@
 import React from "react";
 
-import IconButton from "@material-ui/core/IconButton";
+import {IconButton, makeStyles} from "@material-ui/core";
 import IndeterminateCheckBoxOutlinedIcon from "@material-ui/icons/IndeterminateCheckBoxOutlined";
 import CheckBoxOutlinedIcon from "@material-ui/icons/CheckBoxOutlined";
 
-export default ({isChecklist, setCheckbox}) => {
+const useStyles = makeStyles(theme => ({
+	icon: {
+		padding: theme.spacing(1),
+	},
+}));
+
+export default ({isChecklist, setChecklist}) => {
+	const classes = useStyles();
 	return (
 		<IconButton
+			className={classes.icon}
 			onClick={e => {
 				e.stopPropagation();
-				setCheckbox();
+				setChecklist();
 			}}>
 			{isChecklist
 				? <IndeterminateCheckBoxOutlinedIcon style={{fontSize: 18}} />

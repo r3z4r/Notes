@@ -10,7 +10,7 @@ import {
 	Fade,
 } from "@material-ui/core";
 import ClearIcon from "@material-ui/icons/Clear";
-import NavigateNextIcon from '@material-ui/icons/NavigateNext';
+import CollapseIcon from '@material-ui/icons/NavigateNext';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 import _ from "lodash";
@@ -134,7 +134,7 @@ export default ({notes, setNote, editMode, expandcompleted, setExpandCompleted})
 						e.stopPropagation();
 						setExpandCompleted(perv=>!perv);
 					}}>
-					{expandcompleted?<ExpandMoreIcon/>:<NavigateNextIcon/>}
+					{expandcompleted?<ExpandMoreIcon/>:<CollapseIcon/>}
 					<Typography
 						variant="body1"
 						gutterBottom>{`${doneLength} is completed`}</Typography>

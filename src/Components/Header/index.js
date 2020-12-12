@@ -8,6 +8,7 @@ import {
 	makeStyles,
 	AppBar,
 	useScrollTrigger,
+	Tooltip,
 } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
 import {
@@ -58,12 +59,16 @@ export default ({toggleSidebar}) => {
 			<Typography variant="h6" color="secondary" className={classes.grow}>
 				Notes
 			</Typography>
-			<IconButton onClick={setListview}>
-				{listview ? <GridViewIcon /> : <ListViewIcon />}
-			</IconButton>
-			<IconButton onClick={setTheme}>
-				<Brightness4Icon />
-			</IconButton>
+			<Tooltip title="Change view">
+				<IconButton onClick={setListview}>
+					{listview ? <GridViewIcon /> : <ListViewIcon />}
+				</IconButton>
+			</Tooltip>
+			<Tooltip title="Change theme">
+				<IconButton onClick={setTheme}>
+					<Brightness4Icon />
+				</IconButton>
+			</Tooltip>
 		</AppBar>
 	);
 };

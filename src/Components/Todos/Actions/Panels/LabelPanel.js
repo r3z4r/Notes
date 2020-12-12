@@ -1,29 +1,25 @@
 import React, {useState} from "react";
 
-import PaletteOutlinedIcon from "@material-ui/icons/PaletteOutlined";
-import {IconButton, Popover, makeStyles, useTheme} from "@material-ui/core";
-
-import Color from "./Color";
+import LabelOutlinedIcon from "@material-ui/icons/LabelOutlined";
+import {IconButton, Popover, makeStyles, Typography} from "@material-ui/core";
+import LabelSelect from "../../../Labels/LabelSelect";
 
 const useStyles = makeStyles(theme => ({
 	icon: {
 		padding: theme.spacing(1),
-		marginLeft: theme.spacing(0),
 	},
 	popover: {
 		pointerEvents: "none",
 	},
-	colors: {
+	labels: {
 		pointerEvents: "auto",
-		display: "flex",
-		flexWrap: "wrap",
-		maxWidth: theme.spacing(18),
+		width: theme.spacing(24),
+		padding: theme.spacing(1),
 	},
 }));
 
-export default ({color, setColor, disablePortal}) => {
+export default ({labels, selectedLabels, setLabels, disablePortal}) => {
 	const classes = useStyles();
-	const theme = useTheme();
 	const [anchorEl, setAnchorEl] = useState(null);
 	const handlePopoverOpen = e => {
 		setAnchorEl(e.currentTarget);
@@ -31,26 +27,23 @@ export default ({color, setColor, disablePortal}) => {
 	const handlePopoverClose = () => {
 		setAnchorEl(null);
 	};
-	const palette = Boolean(anchorEl);
+	const labelPanel = Boolean(anchorEl);
 	const handleClick = e => {
 		e.stopPropagation();
-		palette ? handlePopoverClose() : handlePopoverOpen(e);
+		labelPanel ? handlePopoverClose() : handlePopoverOpen(e);
 	};
 	return (
 		<IconButton
-			edge="start"
-			aria-label="palette"
+			aria-label="labelPanel"
 			className={classes.icon}
-			onMouseEnter={handlePopoverOpen}
-			onMouseLeave={handlePopoverClose}
 			onClick={handleClick}>
-			<PaletteOutlinedIcon style={{fontSize: 18}} />
+			<LabelOutlinedIcon style={{fontSize: 18}} />
 			<Popover
 				disablePortal={disablePortal}
 				disableAutoFocus
 				disableEnforceFocus
 				className={classes.popover}
-				open={palette}
+				open={labelPanel}
 				anchorEl={anchorEl}
 				anchorOrigin={{
 					vertical: "bottom",
@@ -63,16 +56,21 @@ export default ({color, setColor, disablePortal}) => {
 				onClose={handlePopoverClose}
 				elevation={2}>
 				{
-					<div className={classes.colors} onMouseLeave={handlePopoverClose}>
-						{Object.keys(theme.custom.palette.noteBackground).map(item =>
-							<Color
-								key={item}
-								color={item}
-								selectedColor={color}
-								checked={color === item}
-								setColor={setColor}
-							/>
-						)}
+					<div className={classes.labels}>
+						<Typography align="left" variant="body2" color="textSecondary">
+							Label note
+						</Typography>
+						{labels &&
+							labels.map(label =>
+								<LabelSelect
+									key={label}
+									isChecked={
+										selectedLabels ? selectedLabels.includes(label) : false
+									}
+									setLabels={setLabels}
+									label={label}
+								/>
+							)}
 					</div>
 				}
 			</Popover>
