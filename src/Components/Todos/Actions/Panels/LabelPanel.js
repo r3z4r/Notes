@@ -8,11 +8,7 @@ const useStyles = makeStyles(theme => ({
 	icon: {
 		padding: theme.spacing(1),
 	},
-	popover: {
-		pointerEvents: "none",
-	},
 	labels: {
-		pointerEvents: "auto",
 		width: theme.spacing(24),
 		padding: theme.spacing(1),
 	},
@@ -42,7 +38,6 @@ export default ({labels, selectedLabels, setLabels, disablePortal}) => {
 				disablePortal={disablePortal}
 				disableAutoFocus
 				disableEnforceFocus
-				className={classes.popover}
 				open={labelPanel}
 				anchorEl={anchorEl}
 				anchorOrigin={{
@@ -57,18 +52,20 @@ export default ({labels, selectedLabels, setLabels, disablePortal}) => {
 				elevation={2}>
 				{
 					<div className={classes.labels}>
-						<Typography align="left" variant="body2" color="textSecondary">
+						<Typography
+							align="left"
+							variant="body2"
+							color="textSecondary"
+							gutterBottom>
 							Label note
 						</Typography>
 						{labels &&
-							labels.map(label =>
+							Object.keys(labels).map(id =>
 								<LabelSelect
-									key={label}
-									isChecked={
-										selectedLabels ? selectedLabels.includes(label) : false
-									}
+									key={id}
+									isChecked={selectedLabels.includes(id)}
 									setLabels={setLabels}
-									label={label}
+									label={{id: id, name: labels[id]}}
 								/>
 							)}
 					</div>

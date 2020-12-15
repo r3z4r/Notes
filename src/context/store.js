@@ -29,6 +29,9 @@ export const ContextProvider = ({children, todos}) => {
 	function setListview() {
 		dispatch({type: "LISTVIEW"});
 	}
+	function setLabels(labels) {
+		dispatch({type: "LABELS", payload: labels});
+	}
 	useEffect(() => {
 		const getNotes = async () => {
 			try {
@@ -74,7 +77,7 @@ export const ContextProvider = ({children, todos}) => {
 							: {
 									darkTheme: false,
 									listview: false,
-									labels: [],
+									labels: {},
 								},
 					});
 				} else {
@@ -98,6 +101,7 @@ export const ContextProvider = ({children, todos}) => {
 				setError: setError,
 				setTheme: setTheme,
 				setListview: setListview,
+				setLabels: setLabels,
 				notes: state.notes,
 				loading: state.loading,
 				error: state.error,

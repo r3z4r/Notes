@@ -5,13 +5,12 @@ import {grey, lightBlue} from "@material-ui/core/colors";
 const lightTheme = createMuiTheme({
 	palette: {
 		type: "light",
-		primary: {
-			main: "#FFFF",
-		},
+		primary: grey,
 		secondary: lightBlue,
 	},
 	custom: {
 		palette: {
+			headerBG: "#FFF6",
 			iconColor: "#5f6368",
 			itemBorderColor: "#DDDDDD",
 			iconHighlight: grey[900],
@@ -53,6 +52,7 @@ const darkTheme = createMuiTheme({
 	},
 	custom: {
 		palette: {
+			headerBG: "#0006",
 			iconColor: "#949596",
 			itemBorderColor: "#5F6368",
 			iconHighlight: "#888A8B",

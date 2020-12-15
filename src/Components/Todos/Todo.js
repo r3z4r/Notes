@@ -130,7 +130,7 @@ export default ({
 						{note}
 					</Typography>}
 			<LabelTags
-				labels={todo.labels}
+				selectedLabels={todo.labels}
 				onDelete={selected => onEditFinish(addRemoveLabels(selected))}
 			/>
 			<Fade in={isHovered}>
@@ -195,7 +195,7 @@ export default ({
 								/>}
 						<br />
 						<LabelTags
-							labels={todo.labels}
+							selectedLabels={todo.labels}
 							onDelete={selected => {
 								updateTodo(addRemoveLabels(selected));
 								setChanged(true);

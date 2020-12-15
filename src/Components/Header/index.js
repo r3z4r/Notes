@@ -25,7 +25,8 @@ const useStyle = makeStyles(theme => ({
 		padding: theme.spacing(0, 1),
 		alignItems: "center",
 		height: theme.spacing(8),
-		backgroundColor: theme.palette.primary.main,
+		backgroundColor: theme.custom.palette.headerBG,
+		backdropFilter: "blur(10px)",
 		zIndex: theme.zIndex.drawer + 1,
 	},
 	headerScroll: {

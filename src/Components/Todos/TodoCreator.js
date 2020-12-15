@@ -52,12 +52,16 @@ export default () => {
 		setTyping(false);
 		setChecklist(false);
 		setTodoLabels([]);
-		if (note === "" && title === "") {
+		setNote("");
+		setTitle("");
+		if (
+			title === "" &&
+			(note.length === 0 ||
+				(isChecklist && note.length === 1 && note[0].text === ""))
+		) {
 			return;
 		}
 		try {
-			setNote("");
-			setTitle("");
 			startLoading();
 			const todo = {
 				title: title,
@@ -117,15 +121,15 @@ export default () => {
 		setChecklist(perv => !perv);
 	};
 
-	const addRemoveLabels = label => {
-		const index = todoLabels.indexOf(label);
+	const addRemoveLabels = selected => {
+		const newLabels = [...todoLabels];
+		const index = todoLabels.indexOf(selected);
 		if (index === -1) {
-			setTodoLabels([...todoLabels, label]);
+			newLabels.push(selected);
 		} else {
-			const newLabels = [...todoLabels];
 			newLabels.splice(index, 1);
-			setTodoLabels(newLabels);
 		}
+		setTodoLabels(newLabels);
 	};
 
 	return (
@@ -178,7 +182,7 @@ export default () => {
 			{typing &&
 				<React.Fragment>
 					<LabelTags
-						labels={todoLabels}
+						selectedLabels={todoLabels}
 						onDelete={label => addRemoveLabels(label)}
 					/>
 					<div className={classes.action}>

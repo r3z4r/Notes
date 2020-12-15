@@ -9,6 +9,12 @@ export default (state = {}, action = {}) => {
 			return {...state, notes: data, loading: false};
 		case "USERINFO":
 			return {...state, userInfo: data, loading: false};
+		case "LABELS":
+			return {
+				...state,
+				userInfo: {...state.userInfo, labels: data},
+				loading: false,
+			};
 		case "ADD":
 			const newNotes = [...state.notes];
 			newNotes.push(data);

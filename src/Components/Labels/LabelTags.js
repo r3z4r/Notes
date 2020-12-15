@@ -1,6 +1,7 @@
-import React from "react";
+import React, {useContext} from "react";
 
 import {Chip, makeStyles} from "@material-ui/core";
+import {globalContext} from "../../context/store";
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -15,21 +16,22 @@ const useStyles = makeStyles(theme => ({
 	},
 }));
 
-export default ({labels, onDelete}) => {
+export default ({selectedLabels, onDelete}) => {
 	const classes = useStyles();
+	const {labels} = useContext(globalContext);
 
 	const handleClick = () => {};
 	return (
 		<div className={classes.root}>
-			{labels &&
-				labels.map(label =>
+			{selectedLabels &&
+				selectedLabels.map(id =>
 					<Chip
 						className={classes.chip}
-						key={label}
+						key={id}
 						size="small"
-						label={label}
+						label={labels && labels[id]}
 						onClick={handleClick}
-						onDelete={() => onDelete(label)}
+						onDelete={() => onDelete(id)}
 					/>
 				)}
 		</div>

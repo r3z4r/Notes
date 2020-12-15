@@ -25,8 +25,11 @@ const useStyles = makeStyles(theme => ({
 		},
 	},
 	drawer: {
-		paddingTop: theme.spacing(8),
+		marginTop: theme.spacing(8),
 		width: drawerWidth,
+		[theme.breakpoints.down("sm")]: {
+			marginTop: theme.spacing(0),
+		},
 	},
 	drawerOpen: {
 		width: drawerWidth,
