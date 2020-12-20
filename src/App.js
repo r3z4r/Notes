@@ -10,6 +10,7 @@ function App() {
 			todos={{
 				loading: false,
 				error: null,
+				filter: "all",
 				notes: [],
 				userInfo: [],
 			}}>

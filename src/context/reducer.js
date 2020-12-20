@@ -29,6 +29,8 @@ export default (state = {}, action = {}) => {
 			return {...state, notes: modifiedNotes};
 		case "ERROR":
 			return {...state, error: data, loading: false};
+		case "FILTER":
+			return {...state, filter: data};
 		case "THEME":
 			return {
 				...state,

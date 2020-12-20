@@ -32,6 +32,9 @@ export const ContextProvider = ({children, todos}) => {
 	function setLabels(labels) {
 		dispatch({type: "LABELS", payload: labels});
 	}
+	function setFilter(by) {
+		dispatch({type: "FILTER", payload: by});
+	}
 	useEffect(() => {
 		const getNotes = async () => {
 			try {
@@ -102,12 +105,14 @@ export const ContextProvider = ({children, todos}) => {
 				setTheme: setTheme,
 				setListview: setListview,
 				setLabels: setLabels,
+				setFilter: setFilter,
 				notes: state.notes,
 				loading: state.loading,
 				error: state.error,
 				darkTheme: state.userInfo.darkTheme,
 				listview: state.userInfo.listview,
 				labels: state.userInfo.labels,
+				filter: state.filter,
 			}}>
 			{children}
 		</globalContext.Provider>

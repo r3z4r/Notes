@@ -1,6 +1,7 @@
-import React, {useState} from "react";
+import React, {useState, useContext} from "react";
 import clsx from "clsx";
 import {
+	Divider,
 	Drawer,
 	List,
 	ListItem,
@@ -16,6 +17,8 @@ import {
 	EditOutlined as LabelEditIcon,
 } from "@material-ui/icons";
 import LabelEdit from "../Labels/LabelEdit";
+import LabelAvater from "../UI/LabelAvater";
+import {globalContext} from "../../context/store";
 
 const drawerWidth = 200;
 const useStyles = makeStyles(theme => ({
@@ -27,9 +30,6 @@ const useStyles = makeStyles(theme => ({
 	drawer: {
 		marginTop: theme.spacing(8),
 		width: drawerWidth,
-		[theme.breakpoints.down("sm")]: {
-			marginTop: theme.spacing(0),
-		},
 	},
 	drawerOpen: {
 		width: drawerWidth,
@@ -59,11 +59,15 @@ const useStyles = makeStyles(theme => ({
 		height: theme.spacing(7),
 		borderRadius: open => (open ? 0 : "50%"),
 	},
+	divider: {
+		opacity: open => (open ? 1 : 0),
+	},
 }));
 
 export default ({open, children}) => {
 	const classes = useStyles(open);
 	const [editLabels, setEditLabels] = useState(false);
+	const {labels, filter, setFilter} = useContext(globalContext);
 
 	return (
 		<div className={classes.root}>
@@ -80,34 +84,47 @@ export default ({open, children}) => {
 					}),
 				}}>
 				<List>
-					<ListItem selected={true} className={classes.menuItem} button>
-						<ListItemIcon>
-							<EmojiObjectsOutlinedIcon />
-						</ListItemIcon>
-						<ListItemText primary="Notes" />
-					</ListItem>
-					<ListItem
+					<SidebarItem
+						open={open}
+						label="Notes"
+						onClick={() => setFilter("all")}
+						icon={<EmojiObjectsOutlinedIcon />}
+						selected={filter === "all"}
+					/>
+					<Divider className={classes.divider} />
+					{labels &&
+						Object.keys(labels).map(id =>
+							<SidebarItem
+								key={id}
+								open={open}
+								label={labels[id]}
+								onClick={() => setFilter(id)}
+								icon={<LabelAvater letter={labels[id][0]} />}
+								selected={filter === id}
+							/>
+						)}
+					<Divider className={classes.divider} />
+					<SidebarItem
+						open={open}
+						label="Edit labels"
 						onClick={() => setEditLabels(true)}
+						icon={<LabelEditIcon />}
 						selected={false}
-						className={classes.menuItem}
-						button>
-						<ListItemIcon>
-							<LabelEditIcon />
-						</ListItemIcon>
-						<ListItemText primary="Edit labels" />
-					</ListItem>
-					<ListItem selected={false} className={classes.menuItem} button>
-						<ListItemIcon>
-							<ArchiveOutlinedIcon />
-						</ListItemIcon>
-						<ListItemText primary="Archive" />
-					</ListItem>
-					<ListItem selected={false} className={classes.menuItem} button>
-						<ListItemIcon>
-							<DeleteOutlinedIcon />
-						</ListItemIcon>
-						<ListItemText primary="Delete" />
-					</ListItem>
+					/>
+					<SidebarItem
+						open={open}
+						label="Archive"
+						onClick={() => setFilter("archive")}
+						icon={<ArchiveOutlinedIcon />}
+						selected={filter === "archive"}
+					/>
+					<SidebarItem
+						open={open}
+						label="Trash"
+						onClick={() => setFilter("trash")}
+						icon={<DeleteOutlinedIcon />}
+						selected={filter === "trash"}
+					/>
 				</List>
 			</Drawer>
 			<main className={classes.content}>
@@ -115,5 +132,21 @@ export default ({open, children}) => {
 			</main>
 			<LabelEdit show={editLabels} close={() => setEditLabels(false)} />
 		</div>
+	);
+};
+
+const SidebarItem = ({label, icon, selected, onClick, open}) => {
+	const classes = useStyles(open);
+	return (
+		<ListItem
+			selected={selected}
+			onClick={onClick}
+			className={classes.menuItem}
+			button>
+			<ListItemIcon>
+				{icon}
+			</ListItemIcon>
+			<ListItemText primary={label} />
+		</ListItem>
 	);
 };
