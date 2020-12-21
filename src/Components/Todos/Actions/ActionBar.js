@@ -1,18 +1,18 @@
-import React, {Fragment} from "react";
+import React, {Fragment, useState} from "react";
 
-import {IconButton, makeStyles} from "@material-ui/core";
+import {IconButton, makeStyles, Tooltip} from "@material-ui/core";
 import DeleteOutlinedIcon from "@material-ui/icons/DeleteOutlined";
 import ColorPanel from "./Panels/ColorPanel";
 import CheckBoxToggle from "./CheckBoxToggle";
 import LabelPanel from "./Panels/LabelPanel";
+import ArchiveToggle from "./ArchiveToggle";
+import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
+import RestoreFromTrashIcon from "@material-ui/icons/RestoreFromTrash";
+import AlertMessage from "../../UI/AlertMessage";
 
 const useStyles = makeStyles(theme => ({
-	icon: {
-		padding: theme.spacing(1),
-		margin: theme.spacing(1, 0),
-	},
-	popover: {
-		pointerEvents: "none",
+	actions: {
+		margin: theme.spacing(0.5, 0),
 	},
 }));
 
@@ -27,25 +27,62 @@ export default ({
 	selectedLabels,
 	setLabels,
 }) => {
-	const classes = useStyles({});
-
+	const classes = useStyles();
+	const [deleteAlert, setDeleteAlert] = useState(false);
 	return (
-		<Fragment>
-			<ColorPanel color={color} setColor={setColor} />
-			<CheckBoxToggle isChecklist={isChecklist} setChecklist={toggleListMode} />
-			<LabelPanel
-				selectedLabels={selectedLabels}
-				labels={labels}
-				setLabels={setLabels}
+		<div className={classes.actions}>
+			{selectedLabels.some(label => label === "trash")
+				? <Fragment>
+						<Tooltip title="Delete note forever">
+							<IconButton
+								aria-label="delete"
+								onClick={e => {
+									e.stopPropagation();
+									setDeleteAlert(true);
+								}}>
+								<DeleteForeverIcon style={{fontSize: 18}} />
+							</IconButton>
+						</Tooltip>
+						<Tooltip title="Restore note">
+							<IconButton
+								aria-label="restore"
+								onClick={() => {
+									setLabels("trash");
+								}}>
+								<RestoreFromTrashIcon style={{fontSize: 18}} />
+							</IconButton>
+						</Tooltip>
+					</Fragment>
+				: <Fragment>
+						<ColorPanel color={color} setColor={setColor} />
+						<CheckBoxToggle
+							isChecklist={isChecklist}
+							setChecklist={toggleListMode}
+						/>
+						<LabelPanel
+							selectedLabels={selectedLabels}
+							labels={labels}
+							setLabels={setLabels}
+						/>
+						<ArchiveToggle
+							isArchived={selectedLabels.some(label => label === "archive")}
+							setLabels={setLabels}
+						/>
+						<Tooltip title="Delete note">
+							<IconButton
+								aria-label="delete"
+								onClick={() => {
+									setLabels("trash");
+								}}>
+								<DeleteOutlinedIcon style={{fontSize: 18}} />
+							</IconButton>
+						</Tooltip>
+					</Fragment>}
+			<AlertMessage
+				show={deleteAlert}
+				onCancel={() => setDeleteAlert(false)}
+				onConfirm={() => onDelete(id)}
 			/>
-			<IconButton
-				aria-label="delete"
-				className={classes.icon}
-				onClick={e => {
-					onDelete(e, id);
-				}}>
-				<DeleteOutlinedIcon style={{fontSize: 18}} />
-			</IconButton>
-		</Fragment>
+		</div>
 	);
 };

@@ -13,26 +13,34 @@ const useStyles = makeStyles(theme => ({
 	},
 	chip: {
 		backgroundColor: theme.custom.palette.labelBackground,
+		"&:hover": {
+			backgroundColor: theme.custom.palette.labelHoverBackground,
+		},
 	},
 }));
 
 export default ({selectedLabels, onDelete}) => {
 	const classes = useStyles();
-	const {labels} = useContext(globalContext);
+	const {labels, setFilter} = useContext(globalContext);
 
-	const handleClick = () => {};
 	return (
 		<div className={classes.root}>
 			{selectedLabels &&
-				selectedLabels.map(id =>
-					<Chip
-						className={classes.chip}
-						key={id}
-						size="small"
-						label={labels && labels[id]}
-						onClick={handleClick}
-						onDelete={() => onDelete(id)}
-					/>
+				labels &&
+				selectedLabels.map(
+					id =>
+						labels[id] &&
+						<Chip
+							className={classes.chip}
+							key={id}
+							size="small"
+							label={labels[id]}
+							onClick={e => {
+								e.stopPropagation();
+								setFilter(id);
+							}}
+							onDelete={() => onDelete(id)}
+						/>
 				)}
 		</div>
 	);

@@ -32,7 +32,16 @@ const lightTheme = createMuiTheme({
 			},
 			noteColorCheck: "#0007",
 			labelBackground: "#0002",
+			labelHoverBackground: "#0005",
 		},
+	},
+	overrides: {
+		// MuiIconButton: {
+		// 	root: {
+		// 		padding: 8,
+		// 		margin: "8px 2px 4px",
+		// 	},
+		// },
 	},
 });
 
@@ -74,6 +83,7 @@ const darkTheme = createMuiTheme({
 			},
 			noteColorCheck: "#FFF7",
 			labelBackground: "#0002",
+			labelHoverBackground: "#FFF3",
 		},
 	},
 });

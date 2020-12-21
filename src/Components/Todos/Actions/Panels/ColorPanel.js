@@ -7,7 +7,6 @@ import Color from "./Color";
 
 const useStyles = makeStyles(theme => ({
 	icon: {
-		padding: theme.spacing(1),
 		marginLeft: theme.spacing(0),
 	},
 	popover: {

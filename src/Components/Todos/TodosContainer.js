@@ -12,9 +12,10 @@ export default () => {
 		setError,
 		listview,
 		labels,
+		filter,
 	} = useContext(globalContext);
-	const onDelete = async (e, id) => {
-		e.stopPropagation();
+	const onDelete = async id => {
+		// e.stopPropagation();
 		startLoading();
 		try {
 			const res = await fetch(
@@ -58,10 +59,18 @@ export default () => {
 			setError(err.message);
 		}
 	};
+
+	const filteredNotes =
+		filter === "all"
+			? notes.filter(
+					note =>
+						!note.labels.some(label => label === "archive" || label === "trash")
+				)
+			: notes.filter(note => note.labels.some(label => label === filter));
 	return (
 		<Fragment>
-			{notes &&
-				notes
+			{filteredNotes &&
+				filteredNotes
 					.slice(0)
 					.reverse()
 					.map(todo =>

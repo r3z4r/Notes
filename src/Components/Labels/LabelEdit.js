@@ -88,14 +88,14 @@ export default ({show, close}) => {
 		}
 	};
 
-	const onEdit = async id => {
+	const onEdit = async (id, name) => {
 		startLoading();
 		try {
 			const res = await fetch(
 				`${process.env.REACT_APP_BASE_URL}/userInfo/labels/${id}.json`,
 				{
 					method: "PUT",
-					body: JSON.stringify(labels[id]),
+					body: JSON.stringify(name),
 				}
 			);
 			endLoading();
@@ -138,7 +138,9 @@ export default ({show, close}) => {
 						Edit labels
 					</Typography>
 					<div className={classes.row}>
-						<IconButton className={classes.icon}>
+						<IconButton
+							onClick={() => setNewLabel("")}
+							className={classes.icon}>
 							<CancelIcon style={{fontSize: 18}} />
 						</IconButton>
 						<Input
@@ -165,7 +167,7 @@ export default ({show, close}) => {
 								name={labels[id]}
 								onChange={editedName =>
 									setLabels({...labels, [id]: editedName})}
-								onEdit={() => onEdit(id)}
+								onEdit={name => onEdit(id, name)}
 								onDelete={() => onDelete(id)}
 							/>
 						)}
@@ -221,7 +223,7 @@ const Label = ({name, onChange, onEdit, onDelete}) => {
 					if (isFocused) {
 						if (editedName !== name) {
 							onChange(editedName);
-							onEdit();
+							onEdit(editedName);
 						}
 						setIsFocused(false);
 					} else {
