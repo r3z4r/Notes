@@ -109,6 +109,10 @@ export default ({
 		return {...todo, labels: newLabels};
 	};
 
+	const createMarkup = html => {
+		return {__html: html};
+	};
+
 	const Note = (
 		<Paper
 			className={classes.todo}
@@ -116,9 +120,7 @@ export default ({
 			onClick={handleOpenModal}
 			onMouseOver={() => setHovered(true)}
 			onMouseLeave={() => setHovered(false)}>
-			<Typography variant="h6">
-				{title}
-			</Typography>
+			<Typography variant="h6" dangerouslySetInnerHTML={createMarkup(title)} />
 			{isChecklist
 				? <ChecklistView
 						expandcompleted={expandcompleted}
@@ -126,9 +128,10 @@ export default ({
 						notes={note}
 						setNote={notes => onEditFinish({...todo, note: notes})}
 					/>
-				: <Typography variant="subtitle1">
-						{note}
-					</Typography>}
+				: <Typography
+						variant="subtitle1"
+						dangerouslySetInnerHTML={createMarkup(note)}
+					/>}
 			<LabelTags
 				selectedLabels={todo.labels}
 				onDelete={selected => onEditFinish(addRemoveLabels(selected))}

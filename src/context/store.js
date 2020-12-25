@@ -35,6 +35,9 @@ export const ContextProvider = ({children, todos}) => {
 	function setFilter(by) {
 		dispatch({type: "FILTER", payload: by});
 	}
+	function setSearchInput(searchValue) {
+		dispatch({type: "SEARCH", payload: searchValue});
+	}
 	useEffect(() => {
 		const getNotes = async () => {
 			try {
@@ -106,6 +109,7 @@ export const ContextProvider = ({children, todos}) => {
 				setListview: setListview,
 				setLabels: setLabels,
 				setFilter: setFilter,
+				setSearchValue: setSearchInput,
 				notes: state.notes,
 				loading: state.loading,
 				error: state.error,
@@ -113,6 +117,7 @@ export const ContextProvider = ({children, todos}) => {
 				listview: state.userInfo.listview,
 				labels: state.userInfo.labels,
 				filter: state.filter,
+				searchValue: state.searchValue,
 			}}>
 			{children}
 		</globalContext.Provider>

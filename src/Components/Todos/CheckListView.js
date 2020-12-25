@@ -108,6 +108,11 @@ export default ({
 		}
 		setNote(changedNotes);
 	};
+
+	const createMarkup = html => {
+		return {__html: html};
+	};
+
 	return (
 		<div className={classes.root}>
 			{editMode
@@ -150,9 +155,11 @@ export default ({
 									onListChange(e, note.order);
 								}}
 							/>
-							<Typography variant="subtitle1" style={{alignSelf: "center"}}>
-								{note.text}
-							</Typography>
+							<Typography
+								variant="subtitle1"
+								style={{alignSelf: "center"}}
+								dangerouslySetInnerHTML={createMarkup(note.text)}
+							/>
 						</div>
 					)}
 			{doneLength > 0 &&

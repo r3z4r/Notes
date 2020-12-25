@@ -203,12 +203,14 @@ const Label = ({name, onChange, onEdit, onDelete}) => {
 			<InputBase
 				onFocus={() => setIsFocused(true)}
 				onBlur={e => {
-					if (e.relatedTarget === null) {
-						setIsFocused(false);
-					} else if (e.relatedTarget.id === `${name}-button`) {
+					if (
+						e.relatedTarget !== null &&
+						e.relatedTarget.id === `${name}-button`
+					) {
 						return;
 					}
 					setIsFocused(false);
+					setEditedName(name);
 				}}
 				className={classes.input}
 				inputRef={inputRef}

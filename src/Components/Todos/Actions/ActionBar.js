@@ -80,8 +80,14 @@ export default ({
 					</Fragment>}
 			<AlertMessage
 				show={deleteAlert}
-				onCancel={() => setDeleteAlert(false)}
-				onConfirm={() => onDelete(id)}
+				onCancel={e => {
+					e.stopPropagation();
+					setDeleteAlert(false);
+				}}
+				onConfirm={e => {
+					e.stopPropagation();
+					onDelete(id);
+				}}
 			/>
 		</div>
 	);

@@ -14,7 +14,7 @@ const useStyle = makeStyles(theme => ({
 		position: "fixed",
 		top: 0,
 		width: "100%",
-		zIndex: theme.zIndex.drawer + 2,
+		zIndex: theme.zIndex.modal + 1,
 	},
 }));
 export default props => {

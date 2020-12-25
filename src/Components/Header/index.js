@@ -10,6 +10,7 @@ import {
 	useScrollTrigger,
 	Tooltip,
 } from "@material-ui/core";
+
 import MenuIcon from "@material-ui/icons/Menu";
 import {
 	Brightness4 as Brightness4Icon,
@@ -17,6 +18,7 @@ import {
 	Apps as GridViewIcon,
 } from "@material-ui/icons";
 import {globalContext} from "../../context/store";
+import Search from "./Search";
 
 const useStyle = makeStyles(theme => ({
 	header: {
@@ -36,6 +38,12 @@ const useStyle = makeStyles(theme => ({
 		height: "60%",
 		margin: theme.spacing(2),
 	},
+	hideOnSM: {
+		display: "none",
+		[theme.breakpoints.up("sm")]: {
+			display: "block",
+		},
+	},
 	grow: {
 		flex: 1,
 	},
@@ -48,6 +56,7 @@ export default ({toggleSidebar}) => {
 	});
 	const classes = useStyle();
 	const {listview, setListview, setTheme} = useContext(globalContext);
+
 	return (
 		<AppBar
 			elevation={trigger ? 4 : 0}
@@ -57,10 +66,12 @@ export default ({toggleSidebar}) => {
 				<MenuIcon color="secondary" />
 			</IconButton>
 			<img className={classes.logo} src={Logo} alt="logo" />
-			<Typography variant="h6" color="secondary" className={classes.grow}>
+			<Typography className={classes.hideOnSM} variant="h6" color="secondary">
 				Notes
 			</Typography>
-			<Tooltip title="Change view">
+			<Search />
+			<div className={classes.grow} />
+			<Tooltip title="Change view" className={classes.hideOnSM}>
 				<IconButton onClick={setListview}>
 					{listview ? <GridViewIcon /> : <ListViewIcon />}
 				</IconButton>

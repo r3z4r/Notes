@@ -11,6 +11,7 @@ function App() {
 				loading: false,
 				error: null,
 				filter: "all",
+				searchValue: "",
 				notes: [],
 				userInfo: [],
 			}}>

@@ -13,9 +13,9 @@ export default () => {
 		listview,
 		labels,
 		filter,
+		searchValue,
 	} = useContext(globalContext);
 	const onDelete = async id => {
-		// e.stopPropagation();
 		startLoading();
 		try {
 			const res = await fetch(
@@ -66,7 +66,51 @@ export default () => {
 					note =>
 						!note.labels.some(label => label === "archive" || label === "trash")
 				)
-			: notes.filter(note => note.labels.some(label => label === filter));
+			: filter === "search"
+				? notes
+						.filter(note => {
+							if (
+								note.title.toLowerCase().includes(searchValue.toLowerCase())
+							) {
+								return true;
+							}
+							if (note.isChecklist) {
+								return note.note.some(item =>
+									item.text.toLowerCase().includes(searchValue.toLowerCase())
+								);
+							} else {
+								return note.note
+									.toLowerCase()
+									.includes(searchValue.toLowerCase());
+							}
+						})
+						.map(note => {
+							let newTitle = note.title.replace(
+								new RegExp(searchValue, "gi"),
+								match =>
+									`<mark style="background : #fdd663 ; color: black;">${match}</mark>`
+							);
+							let newNote;
+							if (note.isChecklist) {
+								newNote = note.note.map(item => {
+									let newText = item.text.replace(
+										new RegExp(searchValue, "gi"),
+										match =>
+											`<mark style="background : #fdd663 ; color: black;">${match}</mark>`
+									);
+									return {...item, text: newText};
+								});
+							} else {
+								newNote = note.note.replace(
+									new RegExp(searchValue, "gi"),
+									match =>
+										`<mark style="background : #fdd663 ; color: black;">${match}</mark>`
+								);
+							}
+
+							return {...note, title: newTitle, note: newNote};
+						})
+				: notes.filter(note => note.labels.some(label => label === filter));
 	return (
 		<Fragment>
 			{filteredNotes &&

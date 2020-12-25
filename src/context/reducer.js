@@ -31,6 +31,8 @@ export default (state = {}, action = {}) => {
 			return {...state, error: data, loading: false};
 		case "FILTER":
 			return {...state, filter: data};
+		case "SEARCH":
+			return {...state, searchValue: data};
 		case "THEME":
 			return {
 				...state,

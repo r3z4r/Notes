@@ -1,4 +1,4 @@
-import React, {useState, useContext} from "react";
+import React, {useState, useContext, useEffect} from "react";
 
 import {
 	InputBase,
@@ -36,6 +36,9 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default () => {
+	const {labels, addTodo, startLoading, setError, filter} = useContext(
+		globalContext
+	);
 	const [typing, setTyping] = useState(false);
 	const [title, setTitle] = useState("");
 	const [note, setNote] = useState("");
@@ -45,8 +48,14 @@ export default () => {
 	const [todoLabels, setTodoLabels] = useState([]);
 
 	const classes = useStyles({col: color});
-	const {labels, addTodo, startLoading, setError} = useContext(globalContext);
 
+	useEffect(
+		() => {
+			filter !== "all" && setTodoLabels([filter]);
+			console.log("creator rendered");
+		},
+		[filter]
+	);
 	const addTodoHandler = async () => {
 		setColor("default");
 		setTyping(false);
